@@ -58,4 +58,18 @@ tests
     CakeListViewModelLoadCakesErrorTests
     If I had more time.
     I would use AI to help with code coverage, tests, and swift lint to keep code clean and compact.
+
+if had more time I could  Add `.refreshable` to trigger reload
+Most Common Step
+This enables pull‑down gesture and runs your async reload logic.
+
+Example:
+
+swift
+List(model.cakes) { cake in
+    Text(cake.title)
+}
+.refreshable {
+    await model.load()
+}
     
