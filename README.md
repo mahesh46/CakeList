@@ -1,81 +1,82 @@
-1. using mvvm architechure
-crated cake model, needs to be hasable for list, using string as a unique identifier (or ypu could use image url)
-  use url in browser to see model structure "https://raw.githubusercontent.com/Waracle/mobile-coding-test-api/refs/heads/main/cakes"
+CakeList — Clean MVVM Architecture Summary
 
-   struct Cake: Decodable, Hashable, Comparable, Identifiable {
-    var id: String { title } // Using title as unique identifier
-    let title: String
-    let desc: String
-    let image: String
+1. Model Layer
+I created a Cake model conforming to Decodable, Hashable, Comparable, and Identifiable.
+Since the API does not provide a unique ID, I used the title as the identifier (alternatively, the image URL could be used).
 
-     static func < (lhs: Cake, rhs: Cake) -> Bool {
-        return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
-    }
 
-    used stackoverflow and google to look up hasable syntax
-2.   created a cake service protocol, for fetching cakes. and a service class to fetch the data from url session, using the service protocal.
-     using solid principle  -abstraction (dependency inversion principle), single responsibility
-     needed later for mock testing.
-    
-3. create viewmodel, By decoupling business logic into a @MainActor ViewModel, UI states remain preserved across orientation changes.
+2. Service Layer (SOLID‑Friendly)
+I introduced a CakeService protocol to abstract data fetching.
+This follows Dependency Inversion and Single Responsibility, making the networking layer mockable for unit tests.
 
-     need to Remove duplicates and sort , use Arry, set to remove ducplicates and sorted function.
 
-3.SwiftUI View with Animations & Retry
- SwiftUI automatically retains @State / @Observable state during orientation changes without re-fetching.
- List items fall down and fade into place with .transition().
-Swift
-  we have different view states,
-  enum ViewState {
-    case idle
-    case loading
-    case loaded([Cake])
-    case error(String)
-}
+3. ViewModel (Business Logic + State Management)
+Using @MainActor ensures UI updates remain safe and predictable.
+By decoupling logic into the ViewModel, SwiftUI preserves state across orientation changes.
+
+I added:
+
+Duplicate removal using Set
+
+Sorting using the model’s Comparable conformance
+
+ViewState enum to model loading/error/success states
+
+4. SwiftUI View with Animations & Retry SwiftUI automatically retains @State / @Observable state during orientation changes without re-fetching. List items fall down and fade into place with .transition(). Swift we have different view states, 
+enum ViewState { 
+case idle 
+case loading 
+case loaded([Cake]) 
+case error(String) 
+} 
 code listview for each of the state cases
 
-add button on list item to bring up sheet with cake descriptipn
 
-.4. Unit Tests
-First instance do manuual test. try and test for each view state
-1. with wifi enabled run app and view cake list, and tap to bring up sheet with detail
-2. turn wifi off and run app, should get the network error
-3. uses networklink conditioner on macbook setting for slow internet connections
+5. Unit Tests
 
-Fast, isolated unit tests using a mock service:
-Swift
+I wrote isolated tests using a MockCakeService, allowing deterministic success/failure scenarios.
 
-tests
-    test viewmodel
-        test_loadCakes_fails_presentsError
-        test_load_failure_setsErrorMessage
-    test success and falure of cakelist
-        test_loadCakes_succeeds_deduplicatesAndSorts
-        test_loadCakes_fails_presentsError
-    run tests in test navigator, then show report navigator then check coverage
-    
-    used browser ai to generate test
-    CakeListViewModelLoadCakesErrorTests
-    If I had more time.
-    I would use AI to help with code coverage, tests, and swift lint to keep code clean and compact.
+Tests include:
 
-if had more time:
-1. I could  Add `.refreshable` to trigger reload
-Most Common Step
-This enables pull‑down gesture and runs your async reload logic.
+test_loadCakes_succeeds_deduplicatesAndSorts
 
-Example:
+test_loadCakes_fails_presentsError
 
-swift
-List(model.cakes) { cake in
-    Text(cake.title)
-}
+test_load_failure_setsErrorMessage
+
+test_viewModel_stateTransitions
+
+I used:
+
+Network Link Conditioner to simulate slow/poor connections
+
+Manual testing (Wi‑Fi on/off)
+
+Xcode Test Navigator + Coverage Report
+
+Browser‑based AI assistance to generate test scaffolding
+
+
+
+
+6. If I Had More Time
+Add SwiftLint for consistent formatting
+
+Improve test coverage using AI‑generated test cases
+
+Add image caching
+
+Add accessibility labels
+
+Add offline persistence
+
+Add skeleton loading animations
+
+7. Pull‑to‑Refresh (Most Common Enhancement)
+
 .refreshable {
     await model.load()
-
 }
-
-
 2. Add a default descriptive image for when image fails to load
 
 
