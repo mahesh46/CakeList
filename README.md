@@ -59,7 +59,8 @@ tests
     If I had more time.
     I would use AI to help with code coverage, tests, and swift lint to keep code clean and compact.
 
-if had more time I could  Add `.refreshable` to trigger reload
+if had more time:
+1. I could  Add `.refreshable` to trigger reload
 Most Common Step
 This enables pull‑down gesture and runs your async reload logic.
 
@@ -71,5 +72,10 @@ List(model.cakes) { cake in
 }
 .refreshable {
     await model.load()
+
 }
-    
+
+
+2. Add a default descriptive image for when image fails to load
+
+
